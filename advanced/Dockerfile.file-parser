@@ -1,0 +1,18 @@
+FROM golang:latest AS builder
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+ADD . /app
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/file-parser.go
+
+FROM alpine:latest AS production
+
+COPY --from=builder /app/main .
+
+# Copying the csv file into container, in real word file will be available on S3 or mounted as volume
+COPY promotions.csv .
+
+CMD ["./main"]
