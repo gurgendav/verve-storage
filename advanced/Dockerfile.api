@@ -11,7 +11,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/api-ma
 FROM alpine:latest AS production
 
 ENV PORT=2020
-#ENV GIN_MODE=release
+ENV GIN_MODE=release
 
 COPY --from=builder /app/main .
 
